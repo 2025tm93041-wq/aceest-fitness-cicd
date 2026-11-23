@@ -17,7 +17,7 @@ pipeline {
 
     environment {
         // CHANGE THIS to your Docker Hub username
-        DOCKERHUB_USER = 'CHANGE_ME'
+        DOCKERHUB_USER = '2025tm93041'
         IMAGE = "${DOCKERHUB_USER}/aceest-fitness"
         // release_tag:application_file pairs, one Docker image per release
         RELEASES = '1.0.0:versions/ACEest_Fitness_v1.py 2.0.0:versions/ACEest_Fitness_v2.py 3.0.0:ACEest_Fitness.py'
