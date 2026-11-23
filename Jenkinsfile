@@ -89,10 +89,14 @@ pipeline {
                 sh '''
                     for entry in $RELEASES; do
                         v=${entry%%:*}
-                        docker run --rm --user root -e EXPECTED_VERSION=$v \
-                            -v "$PWD/tests:/app/tests:ro,Z" -v "$PWD/pytest.ini:/app/pytest.ini:ro,Z" \
-                            $IMAGE:$v \
-                            sh -c "pip install -q pytest==8.3.3 && pytest -q tests/test_container_smoke.py"
+                        cid=$(docker create -e EXPECTED_VERSION=$v $IMAGE:$v)
+                        docker cp "$PWD/tests" $cid:/app/tests
+                        docker cp "$PWD/pytest.ini" $cid:/app/pytest.ini
+                        docker start $cid
+                        docker exec --user root $cid sh -c "pip install -q pytest==8.3.3 && pytest -q tests/test_container_smoke.py"
+                        status=$?
+                        docker rm -f $cid
+                        if [ $status -ne 0 ]; then exit $status; fi
                     done
                 '''
             }
