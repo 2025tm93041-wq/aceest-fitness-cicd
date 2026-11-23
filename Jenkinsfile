@@ -56,7 +56,7 @@ pipeline {
                     sh '''
                         export PATH=/opt/sonar-scanner/bin:$PATH
                         sonar-scanner \
-                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.token=$SONAR_TOKEN \
                             -Dsonar.qualitygate.wait=true \
                             -Dsonar.qualitygate.timeout=300
@@ -64,7 +64,7 @@ pipeline {
                     // Keep a copy of the key results as a build artifact (best effort)
                     sh '''
                         curl -s -u "$SONAR_TOKEN:" \
-                          "http://localhost:9000/api/measures/component?component=aceest-fitness-cicd&metricKeys=alert_status,bugs,vulnerabilities,code_smells,coverage,duplicated_lines_density,security_hotspots,ncloc" \
+                          "http://sonarqube:9000/api/measures/component?component=aceest-fitness-cicd&metricKeys=alert_status,bugs,vulnerabilities,code_smells,coverage,duplicated_lines_density,security_hotspots,ncloc" \
                           -o artifacts/sonar-summary.json || true
                     '''
                 }
