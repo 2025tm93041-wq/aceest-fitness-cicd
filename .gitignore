@@ -10,3 +10,4 @@ reports/
 artifacts/
 .env
 kubeconfig*.yaml
+.coverage
