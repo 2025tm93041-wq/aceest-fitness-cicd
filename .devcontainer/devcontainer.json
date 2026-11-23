@@ -1,0 +1,26 @@
+{
+  "name": "ACEest CI/CD",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "version": "latest",
+      "helm": "none",
+      "minikube": "latest"
+    },
+    "ghcr.io/devcontainers/features/java:1": { "version": "17" }
+  },
+  "hostRequirements": { "cpus": 4 },
+  "postCreateCommand": "python3 -m venv venv && ./venv/bin/pip install -q -r requirements-dev.txt",
+  "forwardPorts": [8080, 9000, 8081, 8082, 8083, 8084, 8085],
+  "portsAttributes": {
+    "8080": { "label": "Jenkins" },
+    "9000": { "label": "SonarQube" },
+    "8081": { "label": "Rolling update" },
+    "8082": { "label": "Blue-green" },
+    "8083": { "label": "Canary" },
+    "8084": { "label": "A/B testing" },
+    "8085": { "label": "Shadow" }
+  },
+  "customizations": { "vscode": { "extensions": ["ms-python.python"] } }
+}

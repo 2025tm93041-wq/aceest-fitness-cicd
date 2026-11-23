@@ -1,0 +1,6 @@
+[run]
+omit =
+    tests/*
+    legacy/*
+    venv/*
+    .venv/*

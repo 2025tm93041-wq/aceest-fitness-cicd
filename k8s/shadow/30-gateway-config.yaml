@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-conf
+  namespace: aceest-shadow
+data:
+  default.conf: |
+    upstream prod_backend   { server aceest-prod:80; }
+    upstream shadow_backend { server aceest-shadow:80; }
+
+    server {
+        listen 80;
+
+        # Users are served by production only; every request is copied to the shadow.
+        location / {
+            mirror /_shadow;
+            mirror_request_body on;
+            proxy_pass http://prod_backend;
+            proxy_set_header Host $host;
+        }
+
+        location = /_shadow {
+            internal;
+            proxy_pass http://shadow_backend$request_uri;
+            proxy_set_header X-Shadow-Traffic "true";
+        }
+    }

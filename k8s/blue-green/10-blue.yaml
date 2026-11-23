@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aceest-blue
+  namespace: aceest-bluegreen
+  labels:
+    app: aceest
+    slot: blue
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: aceest
+      slot: blue
+  template:
+    metadata:
+      labels:
+        app: aceest
+        slot: blue
+    spec:
+      containers:
+        - name: aceest
+          image: DOCKERHUB_USER/aceest-fitness:2.0.0
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DB_PATH
+              value: /data/aceest_fitness.db
+          readinessProbe:
+            httpGet: {path: /health, port: 5000}
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          livenessProbe:
+            httpGet: {path: /health, port: 5000}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 25m, memory: 64Mi}
+            limits: {cpu: 250m, memory: 192Mi}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          emptyDir: {}

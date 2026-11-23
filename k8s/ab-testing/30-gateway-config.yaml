@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-conf
+  namespace: aceest-ab
+data:
+  default.conf: |
+    upstream variant_a { server aceest-a:80; }
+    upstream variant_b { server aceest-b:80; }
+
+    # Users send "X-User-Group: b" to be served variant B; everyone else gets A.
+    map $http_x_user_group $pool {
+        default variant_a;
+        "b"     variant_b;
+    }
+
+    server {
+        listen 80;
+        location / {
+            proxy_pass http://$pool;
+            proxy_set_header Host $host;
+            add_header X-Served-By-Variant $pool always;
+        }
+    }
